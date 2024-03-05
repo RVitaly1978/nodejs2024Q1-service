@@ -1,8 +1,8 @@
 {
   "name": "home-library",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Home Library Service",
+  "author": "Vital Raicheu <rvitaly1978@gmail.com>",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -63,5 +63,9 @@
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.10.1",
     "typescript": "^4.3.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RVitaly1978/nodejs2024Q1-service.git"
   }
 }
