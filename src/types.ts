@@ -6,4 +6,6 @@ export enum ErrorMessage {
   ArtistNotExist = 'Artist does not exist.',
 
   AlbumNotExist = 'Album does not exist.',
+
+  TrackNotExist = 'Track does not exist.',
 }
