@@ -2,7 +2,7 @@ import { Controller, UseInterceptors, Get, Post, Put, Delete, Body, Param, HttpC
 
 import { FindOneParams } from '../dto/find-one-params.dto'
 import { UserService } from './user.service'
-import { UserDto } from './dto/user.dto'
+import { User } from './entities/user.entity'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdatePasswordDto } from './dto/update-password.dto'
 
@@ -16,13 +16,13 @@ export class UserController {
   @Get()
   async getAllUsers() {
     const entries = await this.userService.getAllUsers()
-    return entries.map(entry => new UserDto(entry))
+    return entries.map(entry => new User(entry))
   }
 
   @Post()
   async create(@Body() dto: CreateUserDto) {
     const entry = await this.userService.create(dto)
-    return new UserDto(entry)
+    return new User(entry)
   }
 
   @Get(':id')
@@ -31,7 +31,7 @@ export class UserController {
     if (!entry) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
     }
-    return new UserDto(entry)
+    return new User(entry)
   }
 
   @Put(':id')
@@ -40,7 +40,7 @@ export class UserController {
     @Body() dto: UpdatePasswordDto,
   ) {
     const entry = await this.userService.update(params.id, dto)
-    return new UserDto(entry)
+    return new User(entry)
   }
 
   @Delete(':id')

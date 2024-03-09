@@ -1,4 +1,4 @@
-export class AlbumDto {
+export class Album {
   id: string // uuid v4
   name: string
   year: number

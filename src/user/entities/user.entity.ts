@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer'
 
-export class UserDto {
+export class User {
   id: string // uuid v4
 
   login: string
@@ -14,7 +14,7 @@ export class UserDto {
 
   updatedAt: number // timestamp of last update
 
-  constructor(partial: Partial<UserDto>) {
+  constructor(partial: Partial<User>) {
     Object.assign(this, partial)
   }
 }

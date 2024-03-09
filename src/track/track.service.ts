@@ -4,7 +4,7 @@ import { ModuleRef } from '@nestjs/core'
 
 import { CreateTrackDto } from './dto/create-track.dto'
 import { UpdateTrackDto } from './dto/update-track.dto'
-import { TrackDto } from './dto/track.dto'
+import { Track } from './entities/track.entity'
 
 import { ArtistService } from '../artist/artist.service'
 import { AlbumService } from '../album/album.service'
@@ -14,7 +14,7 @@ import { ErrorMessage } from '../types'
 
 @Injectable()
 export class TrackService implements OnModuleInit {
-  private readonly tracks: TrackDto[] = []
+  private readonly tracks: Track[] = []
   private artistService: ArtistService
   private albumService: AlbumService
   private favoritesService: FavoritesService
@@ -52,7 +52,7 @@ export class TrackService implements OnModuleInit {
     return this.tracks
   }
 
-  async getTrackById(id: string): Promise<TrackDto | undefined> {
+  async getTrackById(id: string): Promise<Track | undefined> {
     return this.tracks.find(item => item.id === id)
   }
 

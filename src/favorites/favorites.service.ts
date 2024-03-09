@@ -1,8 +1,8 @@
 import { Injectable, UnprocessableEntityException, NotFoundException, OnModuleInit } from '@nestjs/common'
 import { ModuleRef } from '@nestjs/core'
 
-import { FavoritesDto } from './dto/favorites.dto'
-import { FavoritesResponseDto } from './dto/favorites-response.dto'
+import { Favorites } from './entities/favorites.entity'
+import { FavoritesResponse } from './entities/favorites-response.entity'
 
 import { TrackService } from '../track/track.service'
 import { AlbumService } from '../album/album.service'
@@ -12,7 +12,7 @@ import { ErrorMessage } from '../types'
 
 @Injectable()
 export class FavoritesService implements OnModuleInit {
-  private readonly favorites: FavoritesDto = {
+  private readonly favorites: Favorites = {
     artists: [],
     albums: [],
     tracks: [],
@@ -29,17 +29,13 @@ export class FavoritesService implements OnModuleInit {
     this.trackService = this.moduleRef.get(TrackService, { strict: false })
   }
 
-  async getFavorites() {
+  async getFavorites(): Promise<FavoritesResponse> {
     const [artists, albums, tracks] = await Promise.all([
       this.artistService.getArtistsByIds(this.favorites.artists),
       this.albumService.getAlbumsByIds(this.favorites.albums),
       this.trackService.getTracksByIds(this.favorites.tracks),
     ])
-    return {
-      artists,
-      albums,
-      tracks,
-    } as FavoritesResponseDto
+    return { artists, albums, tracks }
   }
 
   async addTrack(id: string) {

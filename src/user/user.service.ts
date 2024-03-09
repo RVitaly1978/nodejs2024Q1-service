@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common'
 
-import { UserDto } from './dto/user.dto'
+import { User } from './entities/user.entity'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdatePasswordDto } from './dto/update-password.dto'
 
@@ -9,7 +9,7 @@ import { ErrorMessage } from '../types'
 
 @Injectable()
 export class UserService {
-  private readonly users: UserDto[] = []
+  private readonly users: User[] = []
 
   async create(user: CreateUserDto) {
     const isExist = this.users.find(item => item.login === user.login)
@@ -31,7 +31,7 @@ export class UserService {
     return this.users
   }
 
-  async getUserById(id: string): Promise<UserDto | undefined> {
+  async getUserById(id: string): Promise<User | undefined> {
     return this.users.find(item => item.id === id)
   }
 

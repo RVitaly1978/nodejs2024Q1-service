@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Injectable, NotFoundException, BadRequestException, OnModuleInit } from '@nestjs/common'
 import { ModuleRef } from '@nestjs/core'
 
-import { AlbumDto } from './dto/album.dto'
+import { Album } from './entities/album.entity'
 import { CreateAlbumDto } from './dto/create-album.dto'
 import { UpdateAlbumDto } from './dto/update-album.dto'
 
@@ -14,7 +14,7 @@ import { ErrorMessage } from '../types'
 
 @Injectable()
 export class AlbumService implements OnModuleInit {
-  private readonly albums: AlbumDto[] = []
+  private readonly albums: Album[] = []
   private artistService: ArtistService
   private trackService: TrackService
   private favoritesService: FavoritesService
@@ -46,7 +46,7 @@ export class AlbumService implements OnModuleInit {
     return this.albums
   }
 
-  async getAlbumById(id: string): Promise<AlbumDto | undefined> {
+  async getAlbumById(id: string): Promise<Album | undefined> {
     return this.albums.find(item => item.id === id)
   }
 
