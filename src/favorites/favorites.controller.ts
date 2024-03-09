@@ -17,7 +17,10 @@ export class FavoritesController {
   @Post('track/:id')
   async addTrack(@Param() params: FindOneParams) {
     await this.favoritesService.addTrack(params.id)
-    return SuccessMessage.AddTrackToFavorites
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: SuccessMessage.AddTrackToFavorites,
+    }
   }
 
   @Delete('track/:id')
@@ -29,7 +32,10 @@ export class FavoritesController {
   @Post('album/:id')
   async addAlbum(@Param() params: FindOneParams) {
     await this.favoritesService.addAlbum(params.id)
-    return SuccessMessage.AddAlbumToFavorites
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: SuccessMessage.AddAlbumToFavorites,
+    }
   }
 
   @Delete('album/:id')
@@ -41,7 +47,10 @@ export class FavoritesController {
   @Post('artist/:id')
   async addArtist(@Param() params: FindOneParams) {
     await this.favoritesService.addArtist(params.id)
-    return SuccessMessage.AddArtistToFavorites
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: SuccessMessage.AddArtistToFavorites,
+    }
   }
 
   @Delete('artist/:id')
