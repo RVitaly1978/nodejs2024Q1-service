@@ -1,4 +1,5 @@
 import { Controller, UseInterceptors, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus, NotFoundException, ClassSerializerInterceptor } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 
 import { FindOneParams } from '../dto/find-one-params.dto'
 import { UserService } from './user.service'
@@ -8,6 +9,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto'
 
 import { ErrorMessage } from '../types'
 
+@ApiTags('User')
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('user')
 export class UserController {

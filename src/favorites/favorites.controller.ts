@@ -1,10 +1,12 @@
 import { Controller, Get, Post, Delete, Param, HttpCode, HttpStatus } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 
 import { FindOneParams } from '../dto/find-one-params.dto'
 import { FavoritesService } from './favorites.service'
 
 import { SuccessMessage } from '../types'
 
+@ApiTags('Favorites')
 @Controller('favs')
 export class FavoritesController {
   constructor(private favoritesService: FavoritesService) {}

@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 
 import { FindOneParams } from '../dto/find-one-params.dto'
 import { ArtistService } from './artist.service'
@@ -7,6 +8,7 @@ import { UpdateArtistDto } from './dto/update-artist.dto'
 
 import { ErrorMessage } from '../types'
 
+@ApiTags('Artist')
 @Controller('artist')
 export class ArtistController {
   constructor(private artistService: ArtistService) {}

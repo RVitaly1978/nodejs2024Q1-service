@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 
 import { FindOneParams } from '../dto/find-one-params.dto'
 import { AlbumService } from './album.service'
@@ -7,6 +8,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto'
 
 import { ErrorMessage } from '../types'
 
+@ApiTags('Album')
 @Controller('album')
 export class AlbumController {
   constructor(private albumService: AlbumService) {}
