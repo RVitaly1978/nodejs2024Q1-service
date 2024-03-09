@@ -41,6 +41,6 @@ export class AlbumController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() params: FindOneParams) {
-    return (await this.albumService.remove(params.id))
+    await this.albumService.remove(params.id)
   }
 }

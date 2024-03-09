@@ -41,6 +41,6 @@ export class ArtistController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() params: FindOneParams) {
-    return (await this.artistService.remove(params.id))
+    await this.artistService.remove(params.id)
   }
 }

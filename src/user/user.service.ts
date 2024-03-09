@@ -53,7 +53,7 @@ export class UserService {
     const index = this.users.findIndex(item => item.id === id)
     if (index < 0) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
-     }
+    }
     this.users.splice(index, 1)
     return id
   }

@@ -41,6 +41,6 @@ export class TrackController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() params: FindOneParams) {
-    return (await this.trackService.remove(params.id))
+    await this.trackService.remove(params.id)
   }
 }
