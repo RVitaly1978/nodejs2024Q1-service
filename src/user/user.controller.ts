@@ -15,23 +15,23 @@ export class UserController {
 
   @Get()
   async getAllUsers() {
-    const items = await this.userService.getAllUsers()
-    return items.map(item => new UserDto(item))
+    const entries = await this.userService.getAllUsers()
+    return entries.map(entry => new UserDto(entry))
   }
 
   @Post()
   async create(@Body() dto: CreateUserDto) {
-    const item = await this.userService.create(dto)
-    return new UserDto(item)
+    const entry = await this.userService.create(dto)
+    return new UserDto(entry)
   }
 
   @Get(':id')
   async getUserById(@Param() params: FindOneParams) {
-    const item = await this.userService.getUserById(params.id)
-    if (!item) {
+    const entry = await this.userService.getUserById(params.id)
+    if (!entry) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
     }
-    return new UserDto(item)
+    return new UserDto(entry)
   }
 
   @Put(':id')
@@ -39,8 +39,8 @@ export class UserController {
     @Param() params: FindOneParams,
     @Body() dto: UpdatePasswordDto,
   ) {
-    const item = await this.userService.update(params.id, dto)
-    return new UserDto(item)
+    const entry = await this.userService.update(params.id, dto)
+    return new UserDto(entry)
   }
 
   @Delete(':id')

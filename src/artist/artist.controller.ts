@@ -23,11 +23,11 @@ export class ArtistController {
 
   @Get(':id')
   async getArtistById(@Param() params: FindOneParams) {
-    const item = await this.artistService.getArtistById(params.id)
-    if (!item) {
+    const entry = await this.artistService.getArtistById(params.id)
+    if (!entry) {
       throw new NotFoundException(ErrorMessage.ArtistNotExist)
     }
-    return item
+    return entry
   }
 
   @Put(':id')

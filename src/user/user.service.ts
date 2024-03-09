@@ -36,17 +36,17 @@ export class UserService {
   }
 
   async update(id: string, dto: UpdatePasswordDto) {
-    const user = await this.getUserById(id)
-    if (!user) {
+    const entry = await this.getUserById(id)
+    if (!entry) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
     }
-    if (user.password !== dto.oldPassword) {
+    if (entry.password !== dto.oldPassword) {
       throw new ForbiddenException(ErrorMessage.PasswordNotCorrect)
     }
-    user.password = dto.newPassword
-    user.version += user.version
-    user.updatedAt = new Date().getTime()
-    return user
+    entry.password = dto.newPassword
+    entry.version += entry.version
+    entry.updatedAt = new Date().getTime()
+    return entry
   }
 
   async remove(id: string) {

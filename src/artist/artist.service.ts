@@ -29,13 +29,13 @@ export class ArtistService {
   }
 
   async update(id: string, dto: UpdateArtistDto) {
-    const artist = await this.getArtistById(id)
-    if (!artist) {
+    const entry = await this.getArtistById(id)
+    if (!entry) {
       throw new NotFoundException(ErrorMessage.ArtistNotExist)
     }
-    artist.name = dto.name
-    artist.grammy = dto.grammy
-    return artist
+    entry.name = dto.name
+    entry.grammy = dto.grammy
+    return entry
   }
 
   async remove(id: string) { // TODO: album.artistId to null, track.artistId to null
