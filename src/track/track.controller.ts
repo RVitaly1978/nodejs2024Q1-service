@@ -15,14 +15,14 @@ export class TrackController {
   @ApiOperation({ summary: 'Get tracks list', description: 'Gets all library tracks list' })
   @Get()
   async getAllTracks() {
-    return (await this.trackService.getAllTracks())
+    return await this.trackService.getAllTracks()
   }
 
   @ApiOperation({ summary: 'Add new track', description: 'Add new track information' })
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestBodyDescription })
   @Post()
   async create(@Body() dto: CreateTrackDto) {
-    return (await this.trackService.create(dto))
+    return await this.trackService.create(dto)
   }
 
   @ApiOperation({ summary: 'Get single track by id', description: 'Get single track by id' })
@@ -47,7 +47,7 @@ export class TrackController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTrackDto,
   ) {
-    return (await this.trackService.update(id, dto))
+    return await this.trackService.update(id, dto)
   }
 
   @ApiOperation({ summary: 'Delete track', description: 'Delete track from library' })

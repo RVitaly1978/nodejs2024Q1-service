@@ -12,7 +12,7 @@ export class UserService {
   private readonly users: User[] = []
 
   async create(user: CreateUserDto) {
-    const isExist = this.users.find(item => item.login === user.login)
+    const isExist = this.users.find((item) => item.login === user.login)
     if (isExist) {
       throw new ForbiddenException(ErrorMessage.UserAlreadyExist)
     }
@@ -32,7 +32,7 @@ export class UserService {
   }
 
   async getUserById(id: string): Promise<User | undefined> {
-    return this.users.find(item => item.id === id)
+    return this.users.find((item) => item.id === id)
   }
 
   async update(id: string, dto: UpdatePasswordDto) {
@@ -50,7 +50,7 @@ export class UserService {
   }
 
   async remove(id: string) {
-    const index = this.users.findIndex(item => item.id === id)
+    const index = this.users.findIndex((item) => item.id === id)
     if (index < 0) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
     }

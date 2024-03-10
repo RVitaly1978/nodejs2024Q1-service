@@ -13,7 +13,7 @@ export class FavoritesController {
   @ApiOperation({ summary: 'Get all favorites', description: 'Gets all favorites artists, albums and tracks' })
   @Get()
   async getAllFavorites() {
-    return (await this.favoritesService.getFavorites())
+    return await this.favoritesService.getFavorites()
   }
 
   @ApiOperation({ summary: 'Add track to the favorites', description: 'Add track to the favorites' })

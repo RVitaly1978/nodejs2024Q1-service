@@ -41,7 +41,7 @@ export class ArtistService implements OnModuleInit {
   }
 
   async getArtistById(id: string): Promise<Artist | undefined> {
-    return this.artists.find(item => item.id === id)
+    return this.artists.find((item) => item.id === id)
   }
 
   async update(id: string, dto: UpdateArtistDto) {
@@ -55,7 +55,7 @@ export class ArtistService implements OnModuleInit {
   }
 
   async remove(id: string) {
-    const index = this.artists.findIndex(item => item.id === id)
+    const index = this.artists.findIndex((item) => item.id === id)
     if (index < 0) {
       throw new NotFoundException(ErrorMessage.ArtistNotExist)
     }

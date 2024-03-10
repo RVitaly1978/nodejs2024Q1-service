@@ -53,7 +53,7 @@ export class TrackService implements OnModuleInit {
   }
 
   async getTrackById(id: string): Promise<Track | undefined> {
-    return this.tracks.find(item => item.id === id)
+    return this.tracks.find((item) => item.id === id)
   }
 
   async update(id: string, dto: UpdateTrackDto) {
@@ -69,7 +69,7 @@ export class TrackService implements OnModuleInit {
   }
 
   async remove(id: string) {
-    const index = this.tracks.findIndex(item => item.id === id)
+    const index = this.tracks.findIndex((item) => item.id === id)
     if (index < 0) {
       throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
@@ -79,15 +79,15 @@ export class TrackService implements OnModuleInit {
   }
 
   async removeAlbum(id: string) {
-    const entries = this.tracks.filter(item => item.albumId === id)
-    entries.forEach(item => {
+    const entries = this.tracks.filter((item) => item.albumId === id)
+    entries.forEach((item) => {
       item.albumId = null
     })
   }
 
   async removeArtist(id: string) {
-    const entries = this.tracks.filter(item => item.artistId === id)
-    entries.forEach(item => {
+    const entries = this.tracks.filter((item) => item.artistId === id)
+    entries.forEach((item) => {
       item.artistId = null
     })
   }

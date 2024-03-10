@@ -15,14 +15,14 @@ export class AlbumController {
   @ApiOperation({ summary: 'Get albums list', description: 'Gets all library albums list' })
   @Get()
   async getAllAlbums() {
-    return (await this.albumService.getAllAlbums())
+    return await this.albumService.getAllAlbums()
   }
 
   @ApiOperation({ summary: 'Add new album', description: 'Add new album information' })
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestBodyDescription })
   @Post()
   async create(@Body() dto: CreateAlbumDto) {
-    return (await this.albumService.create(dto))
+    return await this.albumService.create(dto)
   }
 
   @ApiOperation({ summary: 'Get single album by id', description: 'Gets single album by id' })
@@ -47,7 +47,7 @@ export class AlbumController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateAlbumDto,
   ) {
-    return (await this.albumService.update(id, dto))
+    return await this.albumService.update(id, dto)
   }
 
   @ApiOperation({ summary: 'Delete album', description: 'Delete album from library' })

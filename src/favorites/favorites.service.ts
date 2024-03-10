@@ -48,8 +48,8 @@ export class FavoritesService implements OnModuleInit {
     }
   }
 
-  async removeTrack(id: string, throwException: boolean = true) {
-    const index = this.favorites.tracks.findIndex(item => item === id)
+  async removeTrack(id: string, throwException = true) {
+    const index = this.favorites.tracks.findIndex((item) => item === id)
     if (index < 0) {
       if (!throwException) { return }
       throw new NotFoundException(ErrorMessage.TrackNotInFavorites)
@@ -67,8 +67,8 @@ export class FavoritesService implements OnModuleInit {
     }
   }
 
-  async removeAlbum(id: string, throwException: boolean = true) {
-    const index = this.favorites.albums.findIndex(item => item === id)
+  async removeAlbum(id: string, throwException = true) {
+    const index = this.favorites.albums.findIndex((item) => item === id)
     if (index < 0) {
       if (!throwException) { return }
       throw new NotFoundException(ErrorMessage.AlbumNotInFavorites)
@@ -86,8 +86,8 @@ export class FavoritesService implements OnModuleInit {
     }
   }
 
-  async removeArtist(id: string, throwException: boolean = true) {
-    const index = this.favorites.artists.findIndex(item => item === id)
+  async removeArtist(id: string, throwException = true) {
+    const index = this.favorites.artists.findIndex((item) => item === id)
     if (index < 0) {
       if (!throwException) { return }
       throw new NotFoundException(ErrorMessage.ArtistNotInFavorites)

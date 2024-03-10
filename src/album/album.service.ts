@@ -47,7 +47,7 @@ export class AlbumService implements OnModuleInit {
   }
 
   async getAlbumById(id: string): Promise<Album | undefined> {
-    return this.albums.find(item => item.id === id)
+    return this.albums.find((item) => item.id === id)
   }
 
   async update(id: string, dto: UpdateAlbumDto) {
@@ -62,7 +62,7 @@ export class AlbumService implements OnModuleInit {
   }
 
   async remove(id: string) {
-    const index = this.albums.findIndex(item => item.id === id)
+    const index = this.albums.findIndex((item) => item.id === id)
     if (index < 0) {
       throw new NotFoundException(ErrorMessage.AlbumNotExist)
     }
@@ -75,8 +75,8 @@ export class AlbumService implements OnModuleInit {
   }
 
   async removeArtist(id: string) {
-    const entries = this.albums.filter(item => item.artistId === id)
-    entries.forEach(item => {
+    const entries = this.albums.filter((item) => item.artistId === id)
+    entries.forEach((item) => {
       item.artistId = null
     })
   }

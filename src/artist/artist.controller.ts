@@ -15,14 +15,14 @@ export class ArtistController {
   @ApiOperation({ summary: 'Get all artists', description: 'Gets all artists' })
   @Get()
   async getAllArtists() {
-    return (await this.artistService.getAllArtists())
+    return await this.artistService.getAllArtists()
   }
 
   @ApiOperation({ summary: 'Add new artist', description: 'Add new artist' })
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestBodyDescription })
   @Post()
   async create(@Body() dto: CreateArtistDto) {
-    return (await this.artistService.create(dto))
+    return await this.artistService.create(dto)
   }
 
   @ApiOperation({ summary: 'Get single artist by id', description: 'Get single artist by id' })
@@ -47,7 +47,7 @@ export class ArtistController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateArtistDto,
   ) {
-    return (await this.artistService.update(id, dto))
+    return await this.artistService.update(id, dto)
   }
 
   @ApiOperation({ summary: 'Delete artist', description: 'Delete artist from library' })
