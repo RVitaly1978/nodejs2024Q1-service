@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { FindOneParams } from '../dto/find-one-params.dto'
 import { ArtistService } from './artist.service'
 import { CreateArtistDto } from './dto/create-artist.dto'
 import { UpdateArtistDto } from './dto/update-artist.dto'
@@ -24,8 +23,8 @@ export class ArtistController {
   }
 
   @Get(':id')
-  async getArtistById(@Param() params: FindOneParams) {
-    const entry = await this.artistService.getArtistById(params.id)
+  async getArtistById(@Param('id', ParseUUIDPipe) id: string) {
+    const entry = await this.artistService.getArtistById(id)
     if (!entry) {
       throw new NotFoundException(ErrorMessage.ArtistNotExist)
     }
@@ -34,15 +33,15 @@ export class ArtistController {
 
   @Put(':id')
   async update(
-    @Param() params: FindOneParams,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateArtistDto,
   ) {
-    return (await this.artistService.update(params.id, dto))
+    return (await this.artistService.update(id, dto))
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param() params: FindOneParams) {
-    await this.artistService.remove(params.id)
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.artistService.remove(id)
   }
 }

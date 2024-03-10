@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { FindOneParams } from '../dto/find-one-params.dto'
 import { TrackService } from './track.service'
 import { CreateTrackDto } from './dto/create-track.dto'
 import { UpdateTrackDto } from './dto/update-track.dto'
@@ -24,8 +23,8 @@ export class TrackController {
   }
 
   @Get(':id')
-  async getTrackById(@Param() params: FindOneParams) {
-    const entry = await this.trackService.getTrackById(params.id)
+  async getTrackById(@Param('id', ParseUUIDPipe) id: string) {
+    const entry = await this.trackService.getTrackById(id)
     if (!entry) {
       throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
@@ -34,15 +33,15 @@ export class TrackController {
 
   @Put(':id')
   async update(
-    @Param() params: FindOneParams,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTrackDto,
   ) {
-    return (await this.trackService.update(params.id, dto))
+    return (await this.trackService.update(id, dto))
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param() params: FindOneParams) {
-    await this.trackService.remove(params.id)
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.trackService.remove(id)
   }
 }

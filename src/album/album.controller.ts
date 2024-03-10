@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { FindOneParams } from '../dto/find-one-params.dto'
 import { AlbumService } from './album.service'
 import { CreateAlbumDto } from './dto/create-album.dto'
 import { UpdateAlbumDto } from './dto/update-album.dto'
@@ -24,8 +23,8 @@ export class AlbumController {
   }
 
   @Get(':id')
-  async getAlbumById(@Param() params: FindOneParams) {
-    const entry = await this.albumService.getAlbumById(params.id)
+  async getAlbumById(@Param('id', ParseUUIDPipe) id: string) {
+    const entry = await this.albumService.getAlbumById(id)
     if (!entry) {
       throw new NotFoundException(ErrorMessage.AlbumNotExist)
     }
@@ -34,15 +33,15 @@ export class AlbumController {
 
   @Put(':id')
   async update(
-    @Param() params: FindOneParams,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateAlbumDto,
   ) {
-    return (await this.albumService.update(params.id, dto))
+    return (await this.albumService.update(id, dto))
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param() params: FindOneParams) {
-    await this.albumService.remove(params.id)
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.albumService.remove(id)
   }
 }

@@ -1,7 +1,6 @@
-import { Controller, UseInterceptors, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus, NotFoundException, ClassSerializerInterceptor } from '@nestjs/common'
+import { Controller, UseInterceptors, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus, NotFoundException, ClassSerializerInterceptor } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { FindOneParams } from '../dto/find-one-params.dto'
 import { UserService } from './user.service'
 import { User } from './entities/user.entity'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -28,8 +27,8 @@ export class UserController {
   }
 
   @Get(':id')
-  async getUserById(@Param() params: FindOneParams) {
-    const entry = await this.userService.getUserById(params.id)
+  async getUserById(@Param('id', ParseUUIDPipe) id: string) {
+    const entry = await this.userService.getUserById(id)
     if (!entry) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
     }
@@ -38,16 +37,16 @@ export class UserController {
 
   @Put(':id')
   async update(
-    @Param() params: FindOneParams,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdatePasswordDto,
   ) {
-    const entry = await this.userService.update(params.id, dto)
+    const entry = await this.userService.update(id, dto)
     return new User(entry)
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param() params: FindOneParams) {
-    await this.userService.remove(params.id)
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.userService.remove(id)
   }
 }

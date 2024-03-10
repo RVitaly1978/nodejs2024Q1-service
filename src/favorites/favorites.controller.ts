@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Delete, Param, HttpCode, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Delete, Param, ParseUUIDPipe, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { FindOneParams } from '../dto/find-one-params.dto'
 import { FavoritesService } from './favorites.service'
 
 import { SuccessMessage } from '../types'
@@ -17,8 +16,8 @@ export class FavoritesController {
   }
 
   @Post('track/:id')
-  async addTrack(@Param() params: FindOneParams) {
-    await this.favoritesService.addTrack(params.id)
+  async addTrack(@Param('id', ParseUUIDPipe) id: string) {
+    await this.favoritesService.addTrack(id)
     return {
       statusCode: HttpStatus.CREATED,
       message: SuccessMessage.AddTrackToFavorites,
@@ -27,13 +26,13 @@ export class FavoritesController {
 
   @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeTrack(@Param() params: FindOneParams) {
-    await this.favoritesService.removeTrack(params.id)
+  async removeTrack(@Param('id', ParseUUIDPipe) id: string) {
+    await this.favoritesService.removeTrack(id)
   }
 
   @Post('album/:id')
-  async addAlbum(@Param() params: FindOneParams) {
-    await this.favoritesService.addAlbum(params.id)
+  async addAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    await this.favoritesService.addAlbum(id)
     return {
       statusCode: HttpStatus.CREATED,
       message: SuccessMessage.AddAlbumToFavorites,
@@ -42,13 +41,13 @@ export class FavoritesController {
 
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeAlbum(@Param() params: FindOneParams) {
-    await this.favoritesService.removeAlbum(params.id)
+  async removeAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    await this.favoritesService.removeAlbum(id)
   }
 
   @Post('artist/:id')
-  async addArtist(@Param() params: FindOneParams) {
-    await this.favoritesService.addArtist(params.id)
+  async addArtist(@Param('id', ParseUUIDPipe) id: string) {
+    await this.favoritesService.addArtist(id)
     return {
       statusCode: HttpStatus.CREATED,
       message: SuccessMessage.AddArtistToFavorites,
@@ -57,7 +56,7 @@ export class FavoritesController {
 
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeArtist(@Param() params: FindOneParams) {
-    await this.favoritesService.removeArtist(params.id)
+  async removeArtist(@Param('id', ParseUUIDPipe) id: string) {
+    await this.favoritesService.removeArtist(id)
   }
 }
