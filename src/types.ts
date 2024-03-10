@@ -1,5 +1,5 @@
 export enum ErrorMessage {
-  UserNotExist = 'User does not exist.',
+  UserNotExist = 'User not found.',
   UserAlreadyExist = 'A user with the requested login already exists.',
   PasswordNotCorrect = 'Password is not correct.',
 
@@ -11,6 +11,9 @@ export enum ErrorMessage {
 
   TrackNotExist = 'Track does not exist.',
   TrackNotInFavorites = 'Track not in favorites.',
+
+  BadRequestParamDescription = 'Bad request. user id is invalid (not uuid)',
+  BadRequestBodyDescription = 'Bad request. body does not contain required fields',
 }
 
 export enum SuccessMessage {
