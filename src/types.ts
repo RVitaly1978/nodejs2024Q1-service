@@ -12,8 +12,8 @@ export enum ErrorMessage {
   TrackNotExist = 'Track does not exist.',
   TrackNotInFavorites = 'Track not in favorites.',
 
-  BadRequestParamDescription = 'Bad request. user id is invalid (not uuid)',
-  BadRequestBodyDescription = 'Bad request. body does not contain required fields',
+  BadRequestParamDescription = 'Bad request. Param **id** is invalid (not uuid)',
+  BadRequestBodyDescription = 'Bad request. **body** does not contain required fields',
 }
 
 export enum SuccessMessage {
