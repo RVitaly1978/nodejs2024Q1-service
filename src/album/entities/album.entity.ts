@@ -1,6 +1,26 @@
+import { IsUUID, IsNotEmpty, IsString, IsInt, IsPositive, ValidateIf } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+
 export class Album {
-  id: string // uuid v4
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  @IsNotEmpty()
+  id: string
+
+  @ApiProperty({ example: 'Innuendo' })
+  @IsString()
+  @IsNotEmpty()
   name: string
+
+  @ApiProperty({ example: 1991 })
+  @IsInt()
+  @IsPositive()
+  @IsNotEmpty()
   year: number
-  artistId: string | null // refers to Artist
+
+  @ApiProperty({ format: 'uuid', description: 'refers to Artist' })
+  @ValidateIf((_, value) => value !== null)
+  @IsUUID()
+  @IsNotEmpty()
+  artistId: string | null
 }

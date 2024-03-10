@@ -6,8 +6,8 @@ export class UpdateAlbumDto {
   name: string
 
   @IsInt()
-  @IsNotEmpty()
   @IsPositive()
+  @IsNotEmpty()
   year: number
 
   @ValidateIf((_, value) => value !== null)

@@ -16,7 +16,7 @@ export class UpdateTrackDto {
   albumId: string | null
 
   @IsInt()
-  @IsNotEmpty()
   @IsPositive()
+  @IsNotEmpty()
   duration: number
 }

@@ -1,20 +1,36 @@
 import { Exclude } from 'class-transformer'
-import { ApiHideProperty } from '@nestjs/swagger'
+import { IsUUID, IsNotEmpty, IsString, IsInt } from 'class-validator'
+import { ApiProperty, ApiHideProperty } from '@nestjs/swagger'
 
 export class User {
-  id: string // uuid v4
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  @IsNotEmpty()
+  id: string
 
+  @ApiProperty({ example: 'TestUser' })
+  @IsString()
+  @IsNotEmpty()
   login: string
 
   @ApiHideProperty()
   @Exclude()
   password: string
 
-  version: number // integer number, increments on update
+  @ApiProperty({ example: 1, description: 'increments on update' })
+  @IsInt()
+  @IsNotEmpty()
+  version: number
 
-  createdAt: number // timestamp of creation
+  @ApiProperty({ example: 1655000000, description: 'timestamp of creation' })
+  @IsInt()
+  @IsNotEmpty()
+  createdAt: number
 
-  updatedAt: number // timestamp of last update
+  @ApiProperty({ example: 1655000000, description: 'timestamp of last update' })
+  @IsInt()
+  @IsNotEmpty()
+  updatedAt: number
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial)
