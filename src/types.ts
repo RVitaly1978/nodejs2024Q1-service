@@ -3,13 +3,13 @@ export enum ErrorMessage {
   UserAlreadyExist = 'A user with the requested login already exists.',
   PasswordNotCorrect = 'Password is not correct.',
 
-  ArtistNotExist = 'Artist does not exist.',
+  ArtistNotExist = 'Artist not found.',
   ArtistNotInFavorites = 'Artist not in favorites.',
 
-  AlbumNotExist = 'Album does not exist.',
+  AlbumNotExist = 'Album not found.',
   AlbumNotInFavorites = 'Album not in favorites.',
 
-  TrackNotExist = 'Track does not exist.',
+  TrackNotExist = 'Track not found.',
   TrackNotInFavorites = 'Track not in favorites.',
 
   BadRequestParamDescription = 'Bad request. Param **id** is invalid (not uuid)',
