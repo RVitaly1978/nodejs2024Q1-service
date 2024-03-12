@@ -12,10 +12,10 @@
 git clone https://github.com/RVitaly1978/nodejs2024Q1-service.git
 ```
 
-## Checkout to `develop` branch
+## Checkout to `part2` branch
 
 ```bash
-git checkout develop
+git checkout part2
 ```
 
 ## Installing NPM modules
