@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiParam, ApiBadRequestResponse, ApiNotFoundResponse } from '@nestjs/swagger'
 
 import { TrackService } from './track.service'
@@ -31,11 +31,7 @@ export class TrackController {
   @ApiNotFoundResponse({ description: ErrorMessage.TrackNotExist })
   @Get(':id')
   async getTrackById(@Param('id', ParseUUIDPipe) id: string) {
-    const entry = await this.trackService.getTrackById(id)
-    if (!entry) {
-      throw new NotFoundException(ErrorMessage.TrackNotExist)
-    }
-    return entry
+    return await this.trackService.getTrackById(id)
   }
 
   @ApiOperation({ summary: 'Update track information', description: 'Update library track information by id' })

@@ -1,98 +1,81 @@
-import { v4 as uuidv4 } from 'uuid'
-import { Injectable, NotFoundException, BadRequestException, OnModuleInit } from '@nestjs/common'
-import { ModuleRef } from '@nestjs/core'
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 
 import { CreateTrackDto } from './dto/create-track.dto'
 import { UpdateTrackDto } from './dto/update-track.dto'
 import { Track } from './entities/track.entity'
 
-import { ArtistService } from '../artist/artist.service'
-import { AlbumService } from '../album/album.service'
-import { FavoritesService } from '../favorites/favorites.service'
+import { PrismaService } from '../prisma/prisma.service'
 
 import { ErrorMessage } from '../types'
 
 @Injectable()
-export class TrackService implements OnModuleInit {
-  private readonly tracks: Track[] = []
-  private artistService: ArtistService
-  private albumService: AlbumService
-  private favoritesService: FavoritesService
+export class TrackService {
+  constructor(private prisma: PrismaService) {}
 
-  constructor(private moduleRef: ModuleRef) {}
-
-  onModuleInit() {
-    this.artistService = this.moduleRef.get(ArtistService, { strict: false })
-    this.albumService = this.moduleRef.get(AlbumService, { strict: false })
-    this.favoritesService = this.moduleRef.get(FavoritesService, { strict: false })
+  async create(track: CreateTrackDto): Promise<Track> {
+    await this.checkArtistAndAlbumExist(track.artistId, track.albumId)
+    return await this.prisma.track.create({ data: track })
   }
 
-  async create(track: CreateTrackDto) {
-    if (track.artistId || track.albumId) {
-      const res = await Promise.all([
-        track.artistId && this.artistService.getArtistById(track.artistId),
-        track.albumId && this.albumService.getAlbumById(track.albumId),
-      ].filter(Boolean))
-      if (track.artistId && !res[0]) {
-        throw new BadRequestException(ErrorMessage.ArtistNotExist)
-      }
-      if (track.albumId && ((!track.artistId && !res[0]) || (track.artistId && !res[1]))) {
-        throw new BadRequestException(ErrorMessage.AlbumNotExist)
-      }
+  async getAllTracks(): Promise<Track[]> {
+    return await this.prisma.track.findMany()
+  }
+
+  async getTrackById(id: string): Promise<Track> {
+    const entry = await this.prisma.track.findUnique({ where: { id } })
+    if (!entry) {
+      throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
-    const item = {
-      ...track,
-      id: uuidv4(),
-    }
-    this.tracks.push(item)
-    return item
+    return entry
   }
 
-  async getAllTracks() {
-    return this.tracks
-  }
-
-  async getTrackById(id: string): Promise<Track | undefined> {
-    return this.tracks.find((item) => item.id === id)
-  }
-
-  async update(id: string, dto: UpdateTrackDto) {
+  async update(id: string, dto: UpdateTrackDto): Promise<Track> {
     const entry = await this.getTrackById(id)
     if (!entry) {
       throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
-    entry.name = dto.name
-    entry.duration = dto.duration
-    entry.artistId = dto.artistId
-    entry.albumId = dto.albumId
-    return entry
+    return await this.prisma.track.update({
+      where: { id },
+      data: dto,
+    })
   }
 
   async remove(id: string) {
-    const index = this.tracks.findIndex((item) => item.id === id)
-    if (index < 0) {
+    try {
+      await this.prisma.track.delete({ where: { id } })
+      await this.removeTrackFromFavorites(id)
+      return id
+    } catch (err) {
       throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
-    this.tracks.splice(index, 1)
-    await this.favoritesService.removeTrack(id, false)
-    return id
   }
 
-  async removeAlbum(id: string) {
-    const entries = this.tracks.filter((item) => item.albumId === id)
-    entries.forEach((item) => {
-      item.albumId = null
-    })
+  async removeTrackFromFavorites(id: string) {
+    const favorites = await this.prisma.favorites.findFirst()
+    const index = favorites.tracks.indexOf(id)
+    if (index > -1) {
+      favorites.tracks.splice(index, 1)
+      await this.prisma.favorites.update({
+        where: { id: favorites.id },
+        data: {
+          tracks: { set: favorites.tracks },
+        },
+      })
+    }
   }
 
-  async removeArtist(id: string) {
-    const entries = this.tracks.filter((item) => item.artistId === id)
-    entries.forEach((item) => {
-      item.artistId = null
-    })
-  }
-
-  async getTracksByIds(ids: string[]) {
-    return this.tracks.filter(({ id }) => ids.includes(id))
+  async checkArtistAndAlbumExist(artistId: string, albumId: string) {
+    if (artistId || albumId) {
+      const res = await Promise.all([
+        artistId && this.prisma.artist.findUnique({ where: { id: artistId } }),
+        albumId && this.prisma.album.findUnique({ where: { id: albumId } }),
+      ].filter(Boolean))
+      if (artistId && !res[0]) {
+        throw new BadRequestException(ErrorMessage.ArtistNotExist)
+      }
+      if (albumId && ((!artistId && !res[0]) || (artistId && !res[1]))) {
+        throw new BadRequestException(ErrorMessage.AlbumNotExist)
+      }
+    }
   }
 }

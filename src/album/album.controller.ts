@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiParam, ApiBadRequestResponse, ApiNotFoundResponse } from '@nestjs/swagger'
 
 import { AlbumService } from './album.service'
@@ -31,11 +31,7 @@ export class AlbumController {
   @ApiNotFoundResponse({ description: ErrorMessage.AlbumNotExist })
   @Get(':id')
   async getAlbumById(@Param('id', ParseUUIDPipe) id: string) {
-    const entry = await this.albumService.getAlbumById(id)
-    if (!entry) {
-      throw new NotFoundException(ErrorMessage.AlbumNotExist)
-    }
-    return entry
+    return await this.albumService.getAlbumById(id)
   }
 
   @ApiOperation({ summary: 'Update album information', description: 'Update library album information by id' })

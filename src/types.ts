@@ -21,3 +21,19 @@ export enum SuccessMessage {
   AddAlbumToFavorites = 'Album added to favorites.',
   AddArtistToFavorites = 'Artist added to favorites.',
 }
+
+export type UserDb = {
+  id: string
+  login: string
+  password: string
+  version: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type FavoritesDb = {
+  id: string
+  artists: string[]
+  albums: string[]
+  tracks: string[]
+}

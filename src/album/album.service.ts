@@ -1,87 +1,85 @@
-import { v4 as uuidv4 } from 'uuid'
-import { Injectable, NotFoundException, BadRequestException, OnModuleInit } from '@nestjs/common'
-import { ModuleRef } from '@nestjs/core'
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 
 import { Album } from './entities/album.entity'
 import { CreateAlbumDto } from './dto/create-album.dto'
 import { UpdateAlbumDto } from './dto/update-album.dto'
 
-import { ArtistService } from '../artist/artist.service'
-import { TrackService } from '../track/track.service'
-import { FavoritesService } from '../favorites/favorites.service'
+import { PrismaService } from '../prisma/prisma.service'
 
 import { ErrorMessage } from '../types'
 
 @Injectable()
-export class AlbumService implements OnModuleInit {
-  private readonly albums: Album[] = []
-  private artistService: ArtistService
-  private trackService: TrackService
-  private favoritesService: FavoritesService
+export class AlbumService {
+  constructor(private prisma: PrismaService) {}
 
-  constructor(private moduleRef: ModuleRef) {}
-
-  onModuleInit() {
-    this.artistService = this.moduleRef.get(ArtistService, { strict: false })
-    this.trackService = this.moduleRef.get(TrackService, { strict: false })
-    this.favoritesService = this.moduleRef.get(FavoritesService, { strict: false })
+  async create(album: CreateAlbumDto): Promise<Album> {
+    await this.checkArtistExist(album.artistId)
+    return await this.prisma.album.create({ data: album })
   }
 
-  async create(album: CreateAlbumDto) {
-    if (album.artistId) {
-      const entry = await this.artistService.getArtistById(album.artistId)
-      if (!entry) {
-        throw new BadRequestException(ErrorMessage.ArtistNotExist)
-      }
+  async getAllAlbums(): Promise<Album[]> {
+    return await this.prisma.album.findMany()
+  }
+
+  async getAlbumById(id: string): Promise<Album> {
+    const entry = await this.prisma.album.findUnique({ where: { id } })
+    if (!entry) {
+      throw new NotFoundException(ErrorMessage.AlbumNotExist)
     }
-    const item = {
-      ...album,
-      id: uuidv4(),
-    }
-    this.albums.push(item)
-    return item
+    return entry
   }
 
-  async getAllAlbums() {
-    return this.albums
-  }
-
-  async getAlbumById(id: string): Promise<Album | undefined> {
-    return this.albums.find((item) => item.id === id)
-  }
-
-  async update(id: string, dto: UpdateAlbumDto) {
+  async update(id: string, dto: UpdateAlbumDto): Promise<Album> {
     const entry = await this.getAlbumById(id)
     if (!entry) {
       throw new NotFoundException(ErrorMessage.AlbumNotExist)
     }
-    entry.name = dto.name
-    entry.year = dto.year
-    entry.artistId = dto.artistId
-    return entry
-  }
-
-  async remove(id: string) {
-    const index = this.albums.findIndex((item) => item.id === id)
-    if (index < 0) {
-      throw new NotFoundException(ErrorMessage.AlbumNotExist)
-    }
-    this.albums.splice(index, 1)
-    await Promise.all([
-      this.trackService.removeAlbum(id),
-      this.favoritesService.removeAlbum(id, false),
-    ])
-    return id
-  }
-
-  async removeArtist(id: string) {
-    const entries = this.albums.filter((item) => item.artistId === id)
-    entries.forEach((item) => {
-      item.artistId = null
+    return await this.prisma.album.update({
+      where: { id },
+      data: dto,
     })
   }
 
-  async getAlbumsByIds(ids: string[]) {
-    return this.albums.filter(({ id }) => ids.includes(id))
+  async remove(id: string) {
+    try {
+      await this.prisma.album.delete({ where: { id } })
+      await this.updateRelations(id)
+      return id
+    } catch (err) {
+      throw new NotFoundException(ErrorMessage.AlbumNotExist)
+    }
+  }
+
+  async updateRelations(id: string) {
+    await Promise.all([
+      this.prisma.track.updateMany({
+        where: { albumId: id },
+        data: { albumId: null },
+      }),
+      this.removeAlbumFromFavorites(id),
+    ])
+  }
+
+  async removeAlbumFromFavorites(id: string) {
+    const favorites = await this.prisma.favorites.findFirst()
+    const index = favorites.albums.indexOf(id)
+    if (index > -1) {
+      favorites.albums.splice(index, 1)
+      await this.prisma.favorites.update({
+        where: { id: favorites.id },
+        data: {
+          albums: { set: favorites.albums },
+        },
+      })
+    }
+  }
+
+  async checkArtistExist(id: string) {
+    if (id) {
+      const entry = await this.prisma.artist.findUnique({ where: { id } })
+      if (!entry) {
+        throw new BadRequestException(ErrorMessage.ArtistNotExist)
+      }
+    }
   }
 }

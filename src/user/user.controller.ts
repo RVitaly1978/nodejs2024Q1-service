@@ -1,4 +1,4 @@
-import { Controller, UseInterceptors, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus, NotFoundException, ClassSerializerInterceptor } from '@nestjs/common'
+import { Controller, UseInterceptors, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus, ClassSerializerInterceptor } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiParam, ApiForbiddenResponse, ApiBadRequestResponse, ApiNotFoundResponse } from '@nestjs/swagger'
 
 import { UserService } from './user.service'
@@ -37,9 +37,6 @@ export class UserController {
   @Get(':id')
   async getUserById(@Param('id', ParseUUIDPipe) id: string) {
     const entry = await this.userService.getUserById(id)
-    if (!entry) {
-      throw new NotFoundException(ErrorMessage.UserNotExist)
-    }
     return new User(entry)
   }
 

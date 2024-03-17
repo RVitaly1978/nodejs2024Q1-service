@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiParam, ApiBadRequestResponse, ApiNotFoundResponse } from '@nestjs/swagger'
 
 import { ArtistService } from './artist.service'
@@ -31,11 +31,7 @@ export class ArtistController {
   @ApiNotFoundResponse({ description: ErrorMessage.ArtistNotExist })
   @Get(':id')
   async getArtistById(@Param('id', ParseUUIDPipe) id: string) {
-    const entry = await this.artistService.getArtistById(id)
-    if (!entry) {
-      throw new NotFoundException(ErrorMessage.ArtistNotExist)
-    }
-    return entry
+    return await this.artistService.getArtistById(id)
   }
 
   @ApiOperation({ summary: 'Update artist information', description: 'Update artist information by id' })

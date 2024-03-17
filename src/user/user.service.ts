@@ -1,38 +1,43 @@
-import { v4 as uuidv4 } from 'uuid'
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common'
 
 import { User } from './entities/user.entity'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdatePasswordDto } from './dto/update-password.dto'
 
-import { ErrorMessage } from '../types'
+import { PrismaService } from '../prisma/prisma.service'
+
+import { ErrorMessage, UserDb } from '../types'
+
+const getTypedUser = (user: UserDb): User => ({
+  ...user,
+  createdAt: new Date(user.createdAt).getTime(),
+  updatedAt: new Date(user.updatedAt).getTime(),
+})
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = []
+  constructor(private prisma: PrismaService) {}
 
   async create(user: CreateUserDto) {
-    const isExist = this.users.find((item) => item.login === user.login)
+    const isExist = await this.prisma.user.findUnique({ where: { login: user.login } })
     if (isExist) {
       throw new ForbiddenException(ErrorMessage.UserAlreadyExist)
     }
-    const item = {
-      ...user,
-      id: uuidv4(),
-      version: 1,
-      createdAt: new Date().getTime(),
-      updatedAt: new Date().getTime(),
-    }
-    this.users.push(item)
-    return item
+    const entry = await this.prisma.user.create({ data: user })
+    return getTypedUser(entry)
   }
 
   async getAllUsers() {
-    return this.users
+    const entries = await this.prisma.user.findMany()
+    return entries.map(getTypedUser)
   }
 
-  async getUserById(id: string): Promise<User | undefined> {
-    return this.users.find((item) => item.id === id)
+  async getUserById(id: string) {
+    const entry = await this.prisma.user.findUnique({ where: { id } })
+    if (!entry) {
+      throw new NotFoundException(ErrorMessage.UserNotExist)
+    }
+    return getTypedUser(entry)
   }
 
   async update(id: string, dto: UpdatePasswordDto) {
@@ -43,18 +48,19 @@ export class UserService {
     if (entry.password !== dto.oldPassword) {
       throw new ForbiddenException(ErrorMessage.PasswordNotCorrect)
     }
-    entry.password = dto.newPassword
-    entry.version += entry.version
-    entry.updatedAt = new Date().getTime()
-    return entry
+    const updated = await this.prisma.user.update({
+      where: { id },
+      data: { password: dto.newPassword, version: entry.version + 1 },
+    })
+    return getTypedUser(updated)
   }
 
   async remove(id: string) {
-    const index = this.users.findIndex((item) => item.id === id)
-    if (index < 0) {
+    try {
+      await this.prisma.user.delete({ where: { id } })
+      return id
+    } catch (err) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
     }
-    this.users.splice(index, 1)
-    return id
   }
 }
