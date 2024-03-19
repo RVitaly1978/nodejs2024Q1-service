@@ -10,7 +10,7 @@ import { ErrorMessage } from '../types'
 @ApiTags('Album')
 @Controller('album')
 export class AlbumController {
-  constructor(private albumService: AlbumService) {}
+  constructor(private readonly albumService: AlbumService) {}
 
   @ApiOperation({ summary: 'Get albums list', description: 'Gets all library albums list' })
   @Get()

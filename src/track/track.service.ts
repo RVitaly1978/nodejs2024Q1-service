@@ -12,9 +12,9 @@ import { ErrorMessage } from '../types'
 export class TrackService {
   constructor(private prisma: PrismaService) {}
 
-  async create(track: CreateTrackDto): Promise<Track> {
-    await this.checkArtistAndAlbumExist(track.artistId, track.albumId)
-    return await this.prisma.track.create({ data: track })
+  async create(data: CreateTrackDto): Promise<Track> {
+    await this.checkArtistAndAlbumExist(data.artistId, data.albumId)
+    return await this.prisma.track.create({ data })
   }
 
   async getAllTracks(): Promise<Track[]> {
@@ -29,40 +29,37 @@ export class TrackService {
     return entry
   }
 
-  async update(id: string, dto: UpdateTrackDto): Promise<Track> {
-    const entry = await this.getTrackById(id)
-    if (!entry) {
+  async update(id: string, data: UpdateTrackDto): Promise<Track> {
+    try {
+      return await this.prisma.track.update({ where: { id }, data })
+    } catch {
       throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
-    return await this.prisma.track.update({
-      where: { id },
-      data: dto,
-    })
   }
 
   async remove(id: string) {
     try {
       await this.prisma.track.delete({ where: { id } })
-      await this.removeTrackFromFavorites(id)
+      // await this.removeTrackFromFavorites(id)
       return id
     } catch (err) {
       throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
   }
 
-  async removeTrackFromFavorites(id: string) {
-    const favorites = await this.prisma.favorites.findFirst()
-    const index = favorites.tracks.indexOf(id)
-    if (index > -1) {
-      favorites.tracks.splice(index, 1)
-      await this.prisma.favorites.update({
-        where: { id: favorites.id },
-        data: {
-          tracks: { set: favorites.tracks },
-        },
-      })
-    }
-  }
+  // async removeTrackFromFavorites(id: string) {
+  //   const favorites = await this.prisma.favorites.findFirst()
+  //   const index = favorites.tracks.indexOf(id)
+  //   if (index > -1) {
+  //     favorites.tracks.splice(index, 1)
+  //     await this.prisma.favorites.update({
+  //       where: { id: favorites.id },
+  //       data: {
+  //         tracks: { set: favorites.tracks },
+  //       },
+  //     })
+  //   }
+  // }
 
   async checkArtistAndAlbumExist(artistId: string, albumId: string) {
     if (artistId || albumId) {

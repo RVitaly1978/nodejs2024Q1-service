@@ -10,7 +10,7 @@ import { ErrorMessage } from '../types'
 @ApiTags('Track')
 @Controller('track')
 export class TrackController {
-  constructor(private trackService: TrackService) {}
+  constructor(private readonly trackService: TrackService) {}
 
   @ApiOperation({ summary: 'Get tracks list', description: 'Gets all library tracks list' })
   @Get()

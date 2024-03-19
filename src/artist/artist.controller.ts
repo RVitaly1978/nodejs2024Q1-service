@@ -10,7 +10,7 @@ import { ErrorMessage } from '../types'
 @ApiTags('Artist')
 @Controller('artist')
 export class ArtistController {
-  constructor(private artistService: ArtistService) {}
+  constructor(private readonly artistService: ArtistService) {}
 
   @ApiOperation({ summary: 'Get all artists', description: 'Gets all artists' })
   @Get()
