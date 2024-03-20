@@ -2,6 +2,8 @@ import { Exclude } from 'class-transformer'
 import { IsUUID, IsNotEmpty, IsString, IsInt } from 'class-validator'
 import { ApiProperty, ApiHideProperty } from '@nestjs/swagger'
 
+import { UserDb } from '../../types'
+
 export class User {
   @ApiProperty({ format: 'uuid' })
   @IsUUID()
@@ -32,7 +34,11 @@ export class User {
   @IsNotEmpty()
   updatedAt: number
 
-  constructor(partial: Partial<User>) {
-    Object.assign(this, partial)
+  constructor(partial: Partial<UserDb>) {
+    Object.assign(this, {
+      ...partial,
+      createdAt: new Date(partial.createdAt).getTime(),
+      updatedAt: new Date(partial.updatedAt).getTime(),
+    })
   }
 }

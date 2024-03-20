@@ -6,13 +6,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto'
 
 import { PrismaService } from '../prisma/prisma.service'
 
-import { ErrorMessage, UserDb } from '../types'
-
-const getTypedUser = (user: UserDb): User => ({
-  ...user,
-  createdAt: new Date(user.createdAt).getTime(),
-  updatedAt: new Date(user.updatedAt).getTime(),
-})
+import { ErrorMessage } from '../types'
 
 @Injectable()
 export class UserService {
@@ -24,12 +18,12 @@ export class UserService {
       throw new ForbiddenException(ErrorMessage.UserAlreadyExist)
     }
     const entry = await this.prisma.user.create({ data: user })
-    return getTypedUser(entry)
+    return new User(entry)
   }
 
   async getAllUsers() {
     const entries = await this.prisma.user.findMany()
-    return entries.map(getTypedUser)
+    return entries.map((entry) => new User(entry))
   }
 
   async getUserById(id: string) {
@@ -37,7 +31,7 @@ export class UserService {
     if (!entry) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
     }
-    return getTypedUser(entry)
+    return new User(entry)
   }
 
   async update(id: string, dto: UpdatePasswordDto) {
@@ -52,7 +46,7 @@ export class UserService {
       where: { id },
       data: { password: dto.newPassword, version: entry.version + 1 },
     })
-    return getTypedUser(updated)
+    return new User(updated)
   }
 
   async remove(id: string) {
