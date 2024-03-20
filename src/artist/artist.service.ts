@@ -39,38 +39,9 @@ export class ArtistService {
   async remove(id: string) {
     try {
       await this.prisma.artist.delete({ where: { id } })
-      // await this.updateRelations(id)
       return id
     } catch (err) {
       throw new NotFoundException(ErrorMessage.ArtistNotExist)
     }
   }
-
-  // async updateRelations(id: string) {
-  //   await Promise.all([
-  //     this.prisma.album.updateMany({
-  //       where: { artistId: id },
-  //       data: { artistId: null },
-  //     }),
-  //     this.prisma.track.updateMany({
-  //       where: { artistId: id },
-  //       data: { artistId: null },
-  //     }),
-  //     this.removeArtistFromFavorites(id)
-  //   ])
-  // }
-
-  // async removeArtistFromFavorites(id: string) {
-  //   const favorites = await this.prisma.favorites.findFirst()
-  //   const index = favorites.artists.indexOf(id)
-  //   if (index > -1) {
-  //     favorites.artists.splice(index, 1)
-  //     await this.prisma.favorites.update({
-  //       where: { id: favorites.id },
-  //       data: {
-  //         artists: { set: favorites.artists },
-  //       },
-  //     })
-  //   }
-  // }
 }

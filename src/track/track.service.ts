@@ -40,26 +40,11 @@ export class TrackService {
   async remove(id: string) {
     try {
       await this.prisma.track.delete({ where: { id } })
-      // await this.removeTrackFromFavorites(id)
       return id
     } catch (err) {
       throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
   }
-
-  // async removeTrackFromFavorites(id: string) {
-  //   const favorites = await this.prisma.favorites.findFirst()
-  //   const index = favorites.tracks.indexOf(id)
-  //   if (index > -1) {
-  //     favorites.tracks.splice(index, 1)
-  //     await this.prisma.favorites.update({
-  //       where: { id: favorites.id },
-  //       data: {
-  //         tracks: { set: favorites.tracks },
-  //       },
-  //     })
-  //   }
-  // }
 
   async checkArtistAndAlbumExist(artistId: string, albumId: string) {
     if (artistId || albumId) {

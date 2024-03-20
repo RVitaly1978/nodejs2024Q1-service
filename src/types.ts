@@ -30,10 +30,3 @@ export type UserDb = {
   createdAt: Date
   updatedAt: Date
 }
-
-export type FavoritesDb = {
-  id: string
-  artists: string[]
-  albums: string[]
-  tracks: string[]
-}

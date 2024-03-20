@@ -8,5 +8,6 @@ import { PrismaModule } from '../prisma/prisma.module'
   imports: [PrismaModule],
   controllers: [TrackController],
   providers: [TrackService],
+  exports: [TrackService],
 })
 export class TrackModule {}
