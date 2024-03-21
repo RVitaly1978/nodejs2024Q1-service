@@ -11,9 +11,8 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:docker:dev": "npm run prisma:migrate && nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "npx prisma migrate deploy && node dist/main",
+    "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --testMatch \"<rootDir>/*.spec.ts\" --noStackTrace --runInBand",
     "test:auth": "cross-env TEST_MODE=auth jest --testPathIgnorePatterns refresh.e2e.spec.ts --noStackTrace --runInBand",
@@ -21,7 +20,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "prisma:migrate": "npx prisma migrate dev --name init"
+
+    "prisma:migrate": "npx prisma migrate dev --name init",
+    "start:docker:dev": "npm run prisma:migrate && nest start --watch",
+    "docker:scout:app": "docker scout cves rvitaly1978/hls:app",
+    "docker:scout:db": "docker scout cves rvitaly1978/hls:db",
+    "docker:scout": "npm run docker:scout:app && npm run docker:scout:db"
   },
   "prisma": {
     "schema": "./prisma/schema.prisma"
