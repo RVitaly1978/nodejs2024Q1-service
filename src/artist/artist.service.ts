@@ -16,11 +16,11 @@ export class ArtistService {
     return await this.prisma.artist.create({ data })
   }
 
-  async getAllArtists(): Promise<Artist[]> {
+  async getAll(): Promise<Artist[]> {
     return await this.prisma.artist.findMany()
   }
 
-  async getArtistById(id: string): Promise<Artist> {
+  async getOne(id: string): Promise<Artist> {
     const entry = await this.prisma.artist.findUnique({ where: { id } })
     if (!entry) {
       throw new NotFoundException(ErrorMessage.ArtistNotExist)

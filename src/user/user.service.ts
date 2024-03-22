@@ -21,12 +21,12 @@ export class UserService {
     return new User(entry)
   }
 
-  async getAllUsers() {
+  async getAll() {
     const entries = await this.prisma.user.findMany()
     return entries.map((entry) => new User(entry))
   }
 
-  async getUserById(id: string) {
+  async getOne(id: string) {
     const entry = await this.prisma.user.findUnique({ where: { id } })
     if (!entry) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
@@ -35,7 +35,7 @@ export class UserService {
   }
 
   async update(id: string, dto: UpdatePasswordDto) {
-    const entry = await this.getUserById(id)
+    const entry = await this.getOne(id)
     if (!entry) {
       throw new NotFoundException(ErrorMessage.UserNotExist)
     }

@@ -33,7 +33,7 @@ export class FavoritesService {
 
   async addTrack(trackId: string) {
     try {
-      await this.trackService.getTrackById(trackId)
+      await this.trackService.getOne(trackId)
       await this.prisma.favoriteTrack.create({
         data: { trackId },
         select: { track: true },
@@ -53,7 +53,7 @@ export class FavoritesService {
 
   async addAlbum(albumId: string) {
     try {
-      await this.albumService.getAlbumById(albumId)
+      await this.albumService.getOne(albumId)
       await this.prisma.favoriteAlbum.create({
         data: { albumId },
         select: { album: true },
@@ -73,7 +73,7 @@ export class FavoritesService {
 
   async addArtist(artistId: string) {
     try {
-      await this.artistService.getArtistById(artistId)
+      await this.artistService.getOne(artistId)
       await this.prisma.favoriteArtist.create({
         data: { artistId },
         select: { artist: true },

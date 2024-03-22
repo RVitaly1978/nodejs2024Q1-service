@@ -14,8 +14,8 @@ export class TrackController {
 
   @ApiOperation({ summary: 'Get tracks list', description: 'Gets all library tracks list' })
   @Get()
-  async getAllTracks() {
-    return await this.trackService.getAllTracks()
+  async getAll() {
+    return await this.trackService.getAll()
   }
 
   @ApiOperation({ summary: 'Add new track', description: 'Add new track information' })
@@ -30,8 +30,8 @@ export class TrackController {
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestParamDescription })
   @ApiNotFoundResponse({ description: ErrorMessage.TrackNotExist })
   @Get(':id')
-  async getTrackById(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.trackService.getTrackById(id)
+  async getOne(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.trackService.getOne(id)
   }
 
   @ApiOperation({ summary: 'Update track information', description: 'Update library track information by id' })

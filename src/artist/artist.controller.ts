@@ -14,8 +14,8 @@ export class ArtistController {
 
   @ApiOperation({ summary: 'Get all artists', description: 'Gets all artists' })
   @Get()
-  async getAllArtists() {
-    return await this.artistService.getAllArtists()
+  async getAll() {
+    return await this.artistService.getAll()
   }
 
   @ApiOperation({ summary: 'Add new artist', description: 'Add new artist' })
@@ -30,8 +30,8 @@ export class ArtistController {
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestParamDescription })
   @ApiNotFoundResponse({ description: ErrorMessage.ArtistNotExist })
   @Get(':id')
-  async getArtistById(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.artistService.getArtistById(id)
+  async getOne(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.artistService.getOne(id)
   }
 
   @ApiOperation({ summary: 'Update artist information', description: 'Update artist information by id' })

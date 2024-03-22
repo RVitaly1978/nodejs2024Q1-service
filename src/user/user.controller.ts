@@ -15,8 +15,8 @@ export class UserController {
 
   @ApiOperation({ summary: 'Get all users', description: 'Gets all users' })
   @Get()
-  async getAllUsers() {
-    return await this.userService.getAllUsers()
+  async getAll() {
+    return await this.userService.getAll()
   }
 
   @ApiOperation({ summary: 'Create user', description: 'Creates a new user' })
@@ -32,8 +32,8 @@ export class UserController {
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestParamDescription })
   @ApiNotFoundResponse({ description: ErrorMessage.UserNotExist })
   @Get(':id')
-  async getUserById(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.userService.getUserById(id)
+  async getOne(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.userService.getOne(id)
   }
 
   @ApiOperation({ summary: 'Update a user\'s password', description: 'Updates a user\'s password by id' })

@@ -5,23 +5,27 @@ import { CreateAlbumDto } from './dto/create-album.dto'
 import { UpdateAlbumDto } from './dto/update-album.dto'
 
 import { PrismaService } from '../prisma/prisma.service'
+import { ArtistService } from '../artist/artist.service'
 
 import { ErrorMessage } from '../types'
 
 @Injectable()
 export class AlbumService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private artistService: ArtistService,
+  ) {}
 
   async create(data: CreateAlbumDto): Promise<Album> {
     await this.checkArtistExist(data.artistId)
     return await this.prisma.album.create({ data })
   }
 
-  async getAllAlbums(): Promise<Album[]> {
+  async getAll(): Promise<Album[]> {
     return await this.prisma.album.findMany()
   }
 
-  async getAlbumById(id: string): Promise<Album> {
+  async getOne(id: string): Promise<Album> {
     const entry = await this.prisma.album.findUnique({ where: { id } })
     if (!entry) {
       throw new NotFoundException(ErrorMessage.AlbumNotExist)
@@ -46,10 +50,11 @@ export class AlbumService {
     }
   }
 
-  async checkArtistExist(id: string) {
+  async checkArtistExist(id: string | null) {
     if (id) {
-      const entry = await this.prisma.artist.findUnique({ where: { id } })
-      if (!entry) {
+      try {
+        await this.artistService.getOne(id)
+      } catch {
         throw new BadRequestException(ErrorMessage.ArtistNotExist)
       }
     }
