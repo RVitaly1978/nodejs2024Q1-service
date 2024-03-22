@@ -38,6 +38,7 @@
     "compose:stop:prod": "docker compose -f docker-compose.production.yml stop",
     "compose:rm:prod": "docker compose -f docker-compose.production.yml rm",
 
+    "compose:start": "docker compose up --build",
     "compose:build": "docker compose build",
     "compose:up": "docker compose up",
     "compose:stop": "docker compose stop",
