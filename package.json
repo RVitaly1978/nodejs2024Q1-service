@@ -8,12 +8,15 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint:check": "eslint ./src/**/*.ts",
+
     "test": "jest --testMatch \"<rootDir>/*.spec.ts\" --noStackTrace --runInBand",
     "test:auth": "cross-env TEST_MODE=auth jest --testPathIgnorePatterns refresh.e2e.spec.ts --noStackTrace --runInBand",
     "test:refresh": "cross-env TEST_MODE=auth jest --testPathPattern refresh.e2e.spec.ts --noStackTrace --runInBand",
@@ -21,11 +24,24 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 
-    "prisma:migrate": "npx prisma migrate dev --name init",
-    "start:docker:dev": "npm run prisma:migrate && nest start --watch",
-    "docker:scout:app": "docker scout cves rvitaly1978/hls:app",
-    "docker:scout:db": "docker scout cves rvitaly1978/hls:db",
-    "docker:scout": "npm run docker:scout:app && npm run docker:scout:db"
+    "prisma:migrate:dev": "npx prisma migrate dev --name init",
+    "prisma:migrate:deploy": "npx prisma migrate deploy",
+    "start:docker:dev": "npm run prisma:migrate:dev && npm run start:dev",
+    "start:docker:prod": "npm run prisma:migrate:deploy && npm run start:prod",
+
+    "docker:scout:app": "docker scout cves rvitaly1978/hls-dev:app",
+    "docker:scout:db": "docker scout cves rvitaly1978/hls-dev:db",
+    "docker:scout": "npm run docker:scout:app && npm run docker:scout:db",
+
+    "compose:build:prod": "docker compose -f docker-compose.production.yml build",
+    "compose:up:prod": "docker compose -f docker-compose.production.yml up",
+    "compose:stop:prod": "docker compose -f docker-compose.production.yml stop",
+    "compose:rm:prod": "docker compose -f docker-compose.production.yml rm",
+
+    "compose:build": "docker compose build",
+    "compose:up": "docker compose up",
+    "compose:stop": "docker compose stop",
+    "compose:rm": "docker compose rm"
   },
   "prisma": {
     "schema": "./prisma/schema.prisma"

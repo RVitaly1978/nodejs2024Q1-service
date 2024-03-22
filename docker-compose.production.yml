@@ -3,8 +3,8 @@ version: '3.8'
 services:
   db:
     container_name: db
-    image: rvitaly1978/hls-dev:db
-    restart: unless-stopped
+    image: rvitaly1978/hls:db
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile.database
@@ -24,12 +24,12 @@ services:
 
   app:
     container_name: app
-    image: rvitaly1978/hls-dev:app
-    restart: unless-stopped
+    image: rvitaly1978/hls:app
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
-      target: develop
+      target: production
     environment:
       - PORT=${PORT}
       - DB_URL=${DB_URL}
@@ -38,13 +38,11 @@ services:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_NAME=${DB_NAME}
+      - NODE_ENV=production
     ports:
       - '${PORT}:${PORT}'
     depends_on:
       - db
-    volumes:
-      - ./src:/app/src
-      - ./prisma:/app/prisma
     networks:
       - hls
 
