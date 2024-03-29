@@ -11,13 +11,17 @@
 ## Downloading
 
 ```bash
+# clone repo
 git clone https://github.com/RVitaly1978/nodejs2024Q1-service.git
+
+# go to the project directory
+cd nodejs2024Q1-service
 ```
 
-## Checkout to `part2` branch
+## Checkout to `part3` branch
 
 ```bash
-git checkout part2
+git checkout part3
 ```
 
 ## Installing NPM modules
