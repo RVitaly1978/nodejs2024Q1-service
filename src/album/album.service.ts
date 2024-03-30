@@ -50,7 +50,7 @@ export class AlbumService {
     }
   }
 
-  async checkArtistExist(id: string | null) {
+  private async checkArtistExist(id: string | null) {
     if (id) {
       try {
         await this.artistService.getOne(id)
