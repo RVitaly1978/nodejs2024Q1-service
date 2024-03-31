@@ -20,6 +20,8 @@ export enum ErrorMessage {
 
   UnauthorizedRefreshTokenDescription = 'Unauthorized. There is no refreshToken in body.',
   ForbiddenRefreshTokenDescription = 'Forbidden. Refresh token is invalid or expired.',
+
+  InternalServerError = 'Internal server error.'
 }
 
 export enum SuccessMessage {
