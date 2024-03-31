@@ -1,33 +1,63 @@
+import { mkdir } from 'fs/promises'
 import { NestFactory } from '@nestjs/core'
-import { ValidationPipe, Logger } from '@nestjs/common'
+import { ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 
+import { startSwagger } from './swagger/swagger'
 import { AppModule } from './app.module'
+import { AppLogger } from './logger/appLogger.service'
+import { DEFAULT_LOG_LEVELS } from './logger/constants/logLevels'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, { bufferLogs: true })
 
   const configService = app.get(ConfigService)
+
+  const logLevel = DEFAULT_LOG_LEVELS[parseInt(configService.get('LOG_LEVEL', '2'))]
+  const maxFileSize = parseInt(configService.get('MAX_LOG_SIZE', '10000'))
   const PORT = configService.get('PORT', 4000)
+
+  try {
+    await mkdir('logs')
+  } catch {
+    // logs dir already exists
+  }
+
+  const logger = app.get(AppLogger)
+  app.useLogger(logger)
+  app.useLogger([logLevel])
+  logger.setLogRotation(maxFileSize)
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
 
-  const config = new DocumentBuilder()
-    .setTitle('Home Library Service')
-    .setDescription('Home music library service')
-    .setVersion('1.0.0')
-    .addServer(`http://localhost:${PORT}`)
-    .addBearerAuth()
-    .build()
-
-  const document = SwaggerModule.createDocument(app, config)
-
-  SwaggerModule.setup('doc', app, document)
+  startSwagger(app, PORT)
 
   await app.listen(PORT, () => {
-    new Logger('SERVER').log(`Started on port ${PORT}`)
+    logger.log(`Started on port ${PORT}`, 'PORT')
+  })
+
+  process.on('unhandledRejection', (reason) => {
+    if (reason instanceof Error) {
+      logger.error(reason.message, reason.stack, 'UnhandledRejection')
+    } else if (typeof reason === 'object') {
+      logger.error(JSON.stringify(reason), undefined, 'UnhandledRejection')
+    } else {
+      logger.error(String(reason), undefined, 'UnhandledRejection')
+    }
+  })
+
+  process.on('uncaughtException', (error) => {
+    logger.error(error.message, error.stack, 'UncaughtException')
+    app.close()
   })
 }
 
 bootstrap()
+
+// setTimeout(() => {
+//   Promise.reject('Test rejected promise')
+// }, 3000)
+
+// setTimeout(() => {
+//   throw new Error('Test error')
+// }, 4000)
