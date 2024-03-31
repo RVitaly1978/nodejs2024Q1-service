@@ -43,6 +43,8 @@ services:
       - '${PORT}:${PORT}'
     depends_on:
       - db
+    volumes:
+      - app-logs:/app/logs
     networks:
       - hls
 
@@ -54,3 +56,4 @@ networks:
 volumes:
   db-data:
   db-logs:
+  app-logs:

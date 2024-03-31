@@ -45,6 +45,7 @@ services:
     volumes:
       - ./src:/app/src
       - ./prisma:/app/prisma
+      - app-logs:/app/logs
     networks:
       - hls
 
@@ -56,3 +57,4 @@ networks:
 volumes:
   db-data:
   db-logs:
+  app-logs:
