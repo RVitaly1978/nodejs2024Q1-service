@@ -1,18 +1,13 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 
 import { AppLogger } from '../logger/appLogger.service'
-import { DEFAULT_LOG_LEVELS } from '../logger/constants/logLevels'
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private readonly logger = new AppLogger(LoggingInterceptor.name)
-
-  constructor(private configService: ConfigService) {
-    const logLevel = DEFAULT_LOG_LEVELS[parseInt(configService.get('LOG_LEVEL', '2'))]
-    this.logger.setLogLevels([logLevel])
+  constructor(private logger: AppLogger) {
+    this.logger.setContext(LoggingInterceptor.name)
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -24,7 +19,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const msg = `${method} ${url} ${statusCode} ${JSON.stringify(query)} ${JSON.stringify(body)}`
 
     return next.handle().pipe(
-      tap(() => this.logger.debug(msg, logContext))
+      tap(() => this.logger.log(msg, logContext))
     )
   }
 }

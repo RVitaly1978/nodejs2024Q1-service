@@ -1,22 +1,17 @@
 import { HttpAdapterHost } from '@nestjs/core'
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { Request } from 'express'
 
 import { AppLogger } from '../logger/appLogger.service'
-import { DEFAULT_LOG_LEVELS } from '../logger/constants/logLevels'
 import { ErrorMessage } from '../types'
 
 @Catch()
 export class AppExceptionsFilter implements ExceptionFilter {
-  private readonly logger = new AppLogger(AppExceptionsFilter.name)
-
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
-    private configService: ConfigService,
+    private logger: AppLogger,
   ) {
-    const logLevel = DEFAULT_LOG_LEVELS[parseInt(configService.get('LOG_LEVEL', '2'))]
-    this.logger.setLogLevels([logLevel])
+    this.logger.setContext(AppExceptionsFilter.name)
   }
 
   catch(exception: unknown, host: ArgumentsHost): void {
@@ -47,7 +42,8 @@ export class AppExceptionsFilter implements ExceptionFilter {
     }
 
     const msg = `${method} ${url} ${httpStatus} ${JSON.stringify(query)} ${JSON.stringify(body)}`
-    this.logger.debug(msg)
+    const logMethod = exception instanceof HttpException ? 'warn' : 'error'
+    this.logger[logMethod](msg)
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus)
   }

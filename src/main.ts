@@ -6,14 +6,14 @@ import { ConfigService } from '@nestjs/config'
 import { startSwagger } from './swagger/swagger'
 import { AppModule } from './app.module'
 import { AppLogger } from './logger/appLogger.service'
-import { DEFAULT_LOG_LEVELS } from './logger/constants/logLevels'
+import { getLogLevels } from './logger/constants/logLevels'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true })
 
   const configService = app.get(ConfigService)
 
-  const logLevel = DEFAULT_LOG_LEVELS[parseInt(configService.get('LOG_LEVEL', '2'))]
+  const logLevels = getLogLevels(parseInt(configService.get('LOG_LEVEL', '2')))
   const maxFileSize = parseInt(configService.get('MAX_LOG_SIZE', '10000'))
   const PORT = configService.get('PORT', 4000)
 
@@ -25,7 +25,7 @@ async function bootstrap() {
 
   const logger = app.get(AppLogger)
   app.useLogger(logger)
-  app.useLogger([logLevel])
+  app.useLogger(logLevels)
   logger.setLogRotation(maxFileSize)
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }))

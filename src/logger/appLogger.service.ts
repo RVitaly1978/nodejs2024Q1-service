@@ -6,37 +6,47 @@ export class AppLogger extends ConsoleLogger {
   private static ERROR_LOG_PATH = 'logs/error.log.txt'
 
   verbose(message: string, context?: string) {
+    const method = 'verbose'
     const ctx = context || this.context
     super.verbose(message, ctx)
-    this.writeToFile('verbose', message, ctx)
+    if (this.isLevelEnabled(method)) {
+      this.writeToFile(method, message, ctx)
+    }
   }
 
   debug(message: string, context?: string) {
+    const method = 'debug'
     const ctx = context || this.context
     super.debug(message, ctx)
-    this.writeToFile('debug', message, ctx)
+    if (this.isLevelEnabled(method)) {
+      this.writeToFile(method, message, ctx)
+    }
   }
 
   log(message: string, context?: string) {
+    const method = 'log'
     const ctx = context || this.context
     super.log(message, ctx)
-    this.writeToFile('log', message, ctx)
+    if (this.isLevelEnabled(method)) {
+      this.writeToFile(method, message, ctx)
+    }
   }
 
   warn(message: string, context?: string) {
+    const method = 'warn'
     const ctx = context || this.context
     super.warn(message, ctx)
-    this.writeToFile('warn', message, ctx)
+    if (this.isLevelEnabled(method)) {
+      this.writeToFile(method, message, ctx)
+    }
   }
 
   error(message: string, stack?: string, context?: string) {
+    const method = 'error'
     const ctx = context || this.context
-    if (stack) {
-      super.error(message, stack, ctx)
-      this.writeToFile('error', stack, ctx)
-    } else {
-      super.error(message, undefined, ctx)
-      this.writeToFile('error', message, ctx)
+    super.error(message, stack || undefined, ctx)
+    if (this.isLevelEnabled(method)) {
+      this.writeToFile(method, stack || message, ctx)
     }
   }
 
