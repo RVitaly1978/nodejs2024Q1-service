@@ -59,7 +59,7 @@ export class TrackService {
     ])
   }
 
-  async checkArtistExist(id: string | null) {
+  private async checkArtistExist(id: string | null) {
     if (id) {
       try {
         await this.artistService.getOne(id)
@@ -69,7 +69,7 @@ export class TrackService {
     }
   }
 
-  async checkAlbumExist(id: string | null) {
+  private async checkAlbumExist(id: string | null) {
     if (id) {
       try {
         await this.albumService.getOne(id)

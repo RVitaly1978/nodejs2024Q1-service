@@ -14,6 +14,14 @@ export enum ErrorMessage {
 
   BadRequestParamDescription = 'Bad request. Param **id** is invalid (not uuid)',
   BadRequestBodyDescription = 'Bad request. **body** does not contain required fields',
+
+  UnauthorizedDescription = 'Unauthorized. Credentials is not valid.',
+  ForbiddenDescription = 'Forbidden. Credentials is not valid.',
+
+  UnauthorizedRefreshTokenDescription = 'Unauthorized. There is no refreshToken in body.',
+  ForbiddenRefreshTokenDescription = 'Forbidden. Refresh token is invalid or expired.',
+
+  InternalServerError = 'Internal server error.'
 }
 
 export enum SuccessMessage {
@@ -29,4 +37,9 @@ export type UserDb = {
   version: number
   createdAt: Date
   updatedAt: Date
+}
+
+export type JWTTokenPayload = {
+  id: string
+  login: string
 }

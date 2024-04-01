@@ -11,13 +11,17 @@
 ## Downloading
 
 ```bash
+# clone repo
 git clone https://github.com/RVitaly1978/nodejs2024Q1-service.git
+
+# go to the project directory
+cd nodejs2024Q1-service
 ```
 
-## Checkout to `part2` branch
+## Checkout to `part3` branch
 
 ```bash
-git checkout part2
+git checkout part3
 ```
 
 ## Installing NPM modules
@@ -28,7 +32,12 @@ npm install
 
 ## Environment
 
-Create a `.env` file: copy and rename `.env.example` file
+Create a `.env` file: copy and rename `.env.example` file.
+
+> If you are going to review task via `docker compose up` just copy-paste `.env.example` to `.env`.
+> If you want to run app on your machine via `npm start` / `npm run start:dev` you need to manually configure DB variables in `.env`.
+
+Local environment variables are:
 ```bash
 PORT=4000
 
@@ -37,6 +46,9 @@ JWT_SECRET_KEY=secret123123
 JWT_SECRET_REFRESH_KEY=secret123123
 TOKEN_EXPIRE_TIME=1h
 TOKEN_REFRESH_EXPIRE_TIME=24h
+
+LOG_LEVEL=2
+MAX_LOG_SIZE=10000
 
 DB_USER=postgres
 DB_PASSWORD=postgres
@@ -49,6 +61,15 @@ DB_URL="postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?
 ```
 
 > For usage with docker compose provided containerized database, `DB_HOST` should be configured to be service name `db`
+
+> Log levels available:
+>  - 0 - verbose and below
+>  - 1 - debug and below
+>  - 2 - log and below (in-app default)
+>  - 3 - warn and below
+>  - 4 - error
+
+> MAX_LOG_SIZE is set in bytes
 
 ## Build production application
 
@@ -84,20 +105,19 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
 
+> To test `uncaughtException` and `unhandledRejection` please uncomment `setTimeout` functions in `main.ts`.
+
 After application running open new terminal and run tests:
 
 ```bash
-# run all tests without authorization
-npm run test
-
-# run only one of all test suites
-npm run test -- <path to suite>
-
 # run all test with authorization
 npm run test:auth
 
 # run only specific test suite with authorization
 npm run test:auth -- <path to suite>
+
+# run test with refresh token
+npm run test:refresh
 ```
 
 ## Docker container vulnerability scan
