@@ -1,98 +1,81 @@
-import { v4 as uuidv4 } from 'uuid'
-import { Injectable, NotFoundException, BadRequestException, OnModuleInit } from '@nestjs/common'
-import { ModuleRef } from '@nestjs/core'
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 
 import { CreateTrackDto } from './dto/create-track.dto'
 import { UpdateTrackDto } from './dto/update-track.dto'
 import { Track } from './entities/track.entity'
 
+import { PrismaService } from '../prisma/prisma.service'
 import { ArtistService } from '../artist/artist.service'
 import { AlbumService } from '../album/album.service'
-import { FavoritesService } from '../favorites/favorites.service'
 
 import { ErrorMessage } from '../types'
 
 @Injectable()
-export class TrackService implements OnModuleInit {
-  private readonly tracks: Track[] = []
-  private artistService: ArtistService
-  private albumService: AlbumService
-  private favoritesService: FavoritesService
+export class TrackService {
+  constructor(
+    private prisma: PrismaService,
+    private artistService: ArtistService,
+    private albumService: AlbumService,
+  ) {}
 
-  constructor(private moduleRef: ModuleRef) {}
-
-  onModuleInit() {
-    this.artistService = this.moduleRef.get(ArtistService, { strict: false })
-    this.albumService = this.moduleRef.get(AlbumService, { strict: false })
-    this.favoritesService = this.moduleRef.get(FavoritesService, { strict: false })
+  async create(data: CreateTrackDto): Promise<Track> {
+    await this.checkArtistAndAlbumExist(data.artistId, data.albumId)
+    return await this.prisma.track.create({ data })
   }
 
-  async create(track: CreateTrackDto) {
-    if (track.artistId || track.albumId) {
-      const res = await Promise.all([
-        track.artistId && this.artistService.getArtistById(track.artistId),
-        track.albumId && this.albumService.getAlbumById(track.albumId),
-      ].filter(Boolean))
-      if (track.artistId && !res[0]) {
-        throw new BadRequestException(ErrorMessage.ArtistNotExist)
-      }
-      if (track.albumId && ((!track.artistId && !res[0]) || (track.artistId && !res[1]))) {
-        throw new BadRequestException(ErrorMessage.AlbumNotExist)
-      }
-    }
-    const item = {
-      ...track,
-      id: uuidv4(),
-    }
-    this.tracks.push(item)
-    return item
+  async getAll(): Promise<Track[]> {
+    return await this.prisma.track.findMany()
   }
 
-  async getAllTracks() {
-    return this.tracks
-  }
-
-  async getTrackById(id: string): Promise<Track | undefined> {
-    return this.tracks.find((item) => item.id === id)
-  }
-
-  async update(id: string, dto: UpdateTrackDto) {
-    const entry = await this.getTrackById(id)
+  async getOne(id: string): Promise<Track> {
+    const entry = await this.prisma.track.findUnique({ where: { id } })
     if (!entry) {
       throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
-    entry.name = dto.name
-    entry.duration = dto.duration
-    entry.artistId = dto.artistId
-    entry.albumId = dto.albumId
     return entry
   }
 
-  async remove(id: string) {
-    const index = this.tracks.findIndex((item) => item.id === id)
-    if (index < 0) {
+  async update(id: string, data: UpdateTrackDto): Promise<Track> {
+    try {
+      return await this.prisma.track.update({ where: { id }, data })
+    } catch {
       throw new NotFoundException(ErrorMessage.TrackNotExist)
     }
-    this.tracks.splice(index, 1)
-    await this.favoritesService.removeTrack(id, false)
-    return id
   }
 
-  async removeAlbum(id: string) {
-    const entries = this.tracks.filter((item) => item.albumId === id)
-    entries.forEach((item) => {
-      item.albumId = null
-    })
+  async remove(id: string) {
+    try {
+      await this.prisma.track.delete({ where: { id } })
+      return id
+    } catch (err) {
+      throw new NotFoundException(ErrorMessage.TrackNotExist)
+    }
   }
 
-  async removeArtist(id: string) {
-    const entries = this.tracks.filter((item) => item.artistId === id)
-    entries.forEach((item) => {
-      item.artistId = null
-    })
+  async checkArtistAndAlbumExist(artistId: string, albumId: string) {
+    await Promise.all([
+      this.checkArtistExist(artistId),
+      this.checkAlbumExist(albumId),
+    ])
   }
 
-  async getTracksByIds(ids: string[]) {
-    return this.tracks.filter(({ id }) => ids.includes(id))
+  async checkArtistExist(id: string | null) {
+    if (id) {
+      try {
+        await this.artistService.getOne(id)
+      } catch {
+        throw new BadRequestException(ErrorMessage.ArtistNotExist)
+      }
+    }
+  }
+
+  async checkAlbumExist(id: string | null) {
+    if (id) {
+      try {
+        await this.albumService.getOne(id)
+      } catch {
+        throw new BadRequestException(ErrorMessage.AlbumNotExist)
+      }
+    }
   }
 }

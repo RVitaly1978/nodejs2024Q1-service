@@ -1,8 +1,7 @@
-import { Controller, UseInterceptors, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus, NotFoundException, ClassSerializerInterceptor } from '@nestjs/common'
+import { Controller, UseInterceptors, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus, ClassSerializerInterceptor } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiParam, ApiForbiddenResponse, ApiBadRequestResponse, ApiNotFoundResponse } from '@nestjs/swagger'
 
 import { UserService } from './user.service'
-import { User } from './entities/user.entity'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdatePasswordDto } from './dto/update-password.dto'
 
@@ -16,9 +15,8 @@ export class UserController {
 
   @ApiOperation({ summary: 'Get all users', description: 'Gets all users' })
   @Get()
-  async getAllUsers() {
-    const entries = await this.userService.getAllUsers()
-    return entries.map(entry => new User(entry))
+  async getAll() {
+    return await this.userService.getAll()
   }
 
   @ApiOperation({ summary: 'Create user', description: 'Creates a new user' })
@@ -26,8 +24,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestBodyDescription })
   @Post()
   async create(@Body() dto: CreateUserDto) {
-    const entry = await this.userService.create(dto)
-    return new User(entry)
+    return await this.userService.create(dto)
   }
 
   @ApiOperation({ summary: 'Get single user by id', description: 'Get single user by id' })
@@ -35,12 +32,8 @@ export class UserController {
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestParamDescription })
   @ApiNotFoundResponse({ description: ErrorMessage.UserNotExist })
   @Get(':id')
-  async getUserById(@Param('id', ParseUUIDPipe) id: string) {
-    const entry = await this.userService.getUserById(id)
-    if (!entry) {
-      throw new NotFoundException(ErrorMessage.UserNotExist)
-    }
-    return new User(entry)
+  async getOne(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.userService.getOne(id)
   }
 
   @ApiOperation({ summary: 'Update a user\'s password', description: 'Updates a user\'s password by id' })
@@ -53,8 +46,7 @@ export class UserController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdatePasswordDto,
   ) {
-    const entry = await this.userService.update(id, dto)
-    return new User(entry)
+    return await this.userService.update(id, dto)
   }
 
   @ApiOperation({ summary: 'Delete user', description: 'Deletes user by id' })

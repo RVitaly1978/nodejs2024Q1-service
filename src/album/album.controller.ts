@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiParam, ApiBadRequestResponse, ApiNotFoundResponse } from '@nestjs/swagger'
 
 import { AlbumService } from './album.service'
@@ -10,12 +10,12 @@ import { ErrorMessage } from '../types'
 @ApiTags('Album')
 @Controller('album')
 export class AlbumController {
-  constructor(private albumService: AlbumService) {}
+  constructor(private readonly albumService: AlbumService) {}
 
   @ApiOperation({ summary: 'Get albums list', description: 'Gets all library albums list' })
   @Get()
-  async getAllAlbums() {
-    return await this.albumService.getAllAlbums()
+  async getAll() {
+    return await this.albumService.getAll()
   }
 
   @ApiOperation({ summary: 'Add new album', description: 'Add new album information' })
@@ -30,12 +30,8 @@ export class AlbumController {
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestParamDescription })
   @ApiNotFoundResponse({ description: ErrorMessage.AlbumNotExist })
   @Get(':id')
-  async getAlbumById(@Param('id', ParseUUIDPipe) id: string) {
-    const entry = await this.albumService.getAlbumById(id)
-    if (!entry) {
-      throw new NotFoundException(ErrorMessage.AlbumNotExist)
-    }
-    return entry
+  async getOne(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.albumService.getOne(id)
   }
 
   @ApiOperation({ summary: 'Update album information', description: 'Update library album information by id' })

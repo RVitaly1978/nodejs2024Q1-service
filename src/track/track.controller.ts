@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseUUIDPipe, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiParam, ApiBadRequestResponse, ApiNotFoundResponse } from '@nestjs/swagger'
 
 import { TrackService } from './track.service'
@@ -10,12 +10,12 @@ import { ErrorMessage } from '../types'
 @ApiTags('Track')
 @Controller('track')
 export class TrackController {
-  constructor(private trackService: TrackService) {}
+  constructor(private readonly trackService: TrackService) {}
 
   @ApiOperation({ summary: 'Get tracks list', description: 'Gets all library tracks list' })
   @Get()
-  async getAllTracks() {
-    return await this.trackService.getAllTracks()
+  async getAll() {
+    return await this.trackService.getAll()
   }
 
   @ApiOperation({ summary: 'Add new track', description: 'Add new track information' })
@@ -30,12 +30,8 @@ export class TrackController {
   @ApiBadRequestResponse({ description: ErrorMessage.BadRequestParamDescription })
   @ApiNotFoundResponse({ description: ErrorMessage.TrackNotExist })
   @Get(':id')
-  async getTrackById(@Param('id', ParseUUIDPipe) id: string) {
-    const entry = await this.trackService.getTrackById(id)
-    if (!entry) {
-      throw new NotFoundException(ErrorMessage.TrackNotExist)
-    }
-    return entry
+  async getOne(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.trackService.getOne(id)
   }
 
   @ApiOperation({ summary: 'Update track information', description: 'Update library track information by id' })
