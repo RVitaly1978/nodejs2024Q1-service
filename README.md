@@ -105,6 +105,8 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
 
+> To test `uncaughtException` and `unhandledRejection` please uncomment `setTimeout` functions in `main.ts`.
+
 After application running open new terminal and run tests:
 
 ```bash
